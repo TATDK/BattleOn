@@ -1,0 +1,10 @@
+Teams: {
+    Red: {
+        Spawn: 0,100,70,100
+        Players: 
+    }
+    Blue: {
+        Spawn: 0,-100,70,-100
+        Players: 
+    }
+}
