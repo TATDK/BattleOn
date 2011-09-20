@@ -1,0 +1,8 @@
+name: TeamSpawn
+main: dk.earthgame.TAT.TeamSpawn.TeamSpawn
+version: 1.0
+author: TAT
+commands:
+    team:
+        description: TeamSpawn
+        usage: /team help - Show help to TeamSpawn
