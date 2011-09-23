@@ -1,4 +1,4 @@
-package dk.earthgame.TAT.TeamSpawn;
+package dk.earthgame.TAT.BattleOn;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class TeamExecutor implements CommandExecutor {
-	private TeamSpawn plugin;
+	private BattleOn plugin;
 	
-	public TeamExecutor(TeamSpawn instantiate) {
+	public TeamExecutor(BattleOn instantiate) {
 		plugin = instantiate;
 	}
 

@@ -1,4 +1,4 @@
-package dk.earthgame.TAT.TeamSpawn;
+package dk.earthgame.TAT.BattleOn;
 
 import java.util.ArrayList;
 import java.util.List;

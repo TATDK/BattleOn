@@ -1,13 +1,13 @@
-package dk.earthgame.TAT.TeamSpawn;
+package dk.earthgame.TAT.BattleOn;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class TeamListener extends PlayerListener {
-	private TeamSpawn plugin;
+	private BattleOn plugin;
 	
-	public TeamListener(TeamSpawn instantiate) {
+	public TeamListener(BattleOn instantiate) {
 		plugin = instantiate;
 	}
 	

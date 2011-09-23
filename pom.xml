@@ -2,12 +2,12 @@
   <modelVersion>4.0.0</modelVersion>
   
   <groupId>dk.earthgame.TAT</groupId>
-  <artifactId>TeamSpawn</artifactId>
+  <artifactId>BattleOn</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   
-  <name>TeamSpawn</name>
-  <description>Team spawn controller</description>
+  <name>BattleOn</name>
+  <description>Battle System</description>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

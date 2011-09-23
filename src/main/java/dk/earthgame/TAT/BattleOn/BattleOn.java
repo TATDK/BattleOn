@@ -1,4 +1,4 @@
-package dk.earthgame.TAT.TeamSpawn;
+package dk.earthgame.TAT.BattleOn;
 
 import java.util.logging.Logger;
 
@@ -8,7 +8,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class TeamSpawn extends JavaPlugin {
+public class BattleOn extends JavaPlugin {
 	private PluginDescriptionFile description;
 	Logger log = Logger.getLogger("Minecraft.TeamSpawn");
 	
@@ -26,9 +26,9 @@ public class TeamSpawn extends JavaPlugin {
 		
 		getCommand("team").setExecutor(TSexecutor);
 		
-		this.getDataFolder().mkdirs();
-		controller.createDefaultTeams();
+		controller.createDefaultConfigFiles();
 		controller.loadTeams();
+		controller.loadSpawns();
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package dk.earthgame.TAT.TeamSpawn;
+package dk.earthgame.TAT.BattleOn;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,14 +16,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
 public class TeamController {
-	private TeamSpawn plugin;
+	private BattleOn plugin;
 	private List<Team> teams;
 	private Configuration config;
 	
-	public TeamController(TeamSpawn instantiate) {
+	public TeamController(BattleOn instantiate) {
 		plugin = instantiate;
 		teams = new ArrayList<Team>();
-		config = new Configuration(new File(plugin.getDataFolder(), "Teams.yml"));
+		config = new Configuration(new File("Teams.yml"));
 	}
 	
 	public boolean playerOnTeam(Player player) { return playerOnTeam(player.getName()); }
@@ -89,11 +89,11 @@ public class TeamController {
 		return teams;
 	}
 	
-	void createDefaultTeams() {
+	void createDefaultConfigFiles() {
         String name = "Teams.yml";
         File actual = new File(plugin.getDataFolder(), name);
         if (!actual.exists()) {
-            InputStream input = TeamSpawn.class.getResourceAsStream("/Config/" + name);
+            InputStream input = BattleOn.class.getResourceAsStream("/Config/" + name);
             if (input != null) {
                 FileOutputStream output = null;
 
@@ -128,6 +128,38 @@ public class TeamController {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	void loadTeams() {
+        config.load();
+        
+        HashMap<String, HashMap<String,String>> teams = (HashMap<String, HashMap<String,String>>)config.getProperty("Teams");
+        Iterator it = teams.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, HashMap<String,String>> pairs = (Map.Entry<String, HashMap<String,String>>)it.next();
+            String name = pairs.getKey();
+            Location l = new Location(plugin.getServer().getWorlds().get(0),0,67,0);
+            String players = "";
+            Iterator it2 = pairs.getValue().entrySet().iterator();
+            while (it2.hasNext()) {
+                Map.Entry<String,String> pairs2 = (Map.Entry<String,String>)it2.next();
+                if (pairs2.getKey().equalsIgnoreCase("Spawn")) {
+                	String[] lv = pairs2.getValue().split(",");
+                	UUID wid;
+                	if (lv[0].equalsIgnoreCase("0")) {
+                		wid = plugin.getServer().getWorlds().get(Integer.parseInt(lv[0])).getUID();
+                	} else {
+                		wid = UUID.fromString(lv[0]);
+                	}
+                	l = new Location(plugin.getServer().getWorld(wid),Double.parseDouble(lv[1]),Double.parseDouble(lv[2]),Double.parseDouble(lv[3]));
+                }
+                if (pairs2.getKey().equalsIgnoreCase("Players")) {
+                	players = pairs2.getValue();
+                }
+            }
+            createTeam(name, l, players);
+        }
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	void loadSpawns() {
         config.load();
         
         HashMap<String, HashMap<String,String>> teams = (HashMap<String, HashMap<String,String>>)config.getProperty("Teams");
