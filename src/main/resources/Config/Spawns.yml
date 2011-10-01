@@ -1,8 +1,6 @@
-Teams:
+Spawns: {
   Red:
-    - "Player1"
   Yellow:
-    - "Player2"
   Blue:
   Green:
   Black:
@@ -17,7 +15,4 @@ Teams:
   Lime:
   Magenta:
   Silver:
-
-Admins:
-  - "Admin1"
-  - "Admin2"
+}
