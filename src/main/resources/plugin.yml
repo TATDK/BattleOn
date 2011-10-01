@@ -1,8 +1,8 @@
-name: TeamSpawn
-main: dk.earthgame.TAT.TeamSpawn.TeamSpawn
+name: BattleOn
+main: dk.earthgame.TAT.BattleOn.BattleOn
 version: 1.0
 author: TAT
 commands:
-    team:
-        description: TeamSpawn
-        usage: /team help - Show help to TeamSpawn
+    battle:
+        description: BattleOn
+        usage: /battle help - Show help to BattleOn
