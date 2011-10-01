@@ -8,10 +8,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TeamExecutor implements CommandExecutor {
+public class Executor implements CommandExecutor {
 	private BattleOn plugin;
 	
-	public TeamExecutor(BattleOn instantiate) {
+	public Executor(BattleOn instantiate) {
 		plugin = instantiate;
 	}
 
@@ -28,7 +28,7 @@ public class TeamExecutor implements CommandExecutor {
 					}
 					Team newTeam = plugin.controller.getTeam(args[1]);
 					newTeam.addPlayer(player);
-					sender.sendMessage("Du er tilføjet til team " + newTeam.name);
+					sender.sendMessage("Du er tilfï¿½jet til team " + newTeam.name);
 				} else {
 					sender.sendMessage("Team findes ikke");
 				}
@@ -80,6 +80,6 @@ public class TeamExecutor implements CommandExecutor {
 		player.sendMessage("/team join <team> - Tilslut et team");
 		player.sendMessage("/team leave - Forlad team");
 		player.sendMessage("/team list - Vis teams");
-		player.sendMessage("/team list <team> - Vis spillere på team");
+		player.sendMessage("/team list <team> - Vis spillere pï¿½ team");
 	}
 }

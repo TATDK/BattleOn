@@ -7,13 +7,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class Team {
-	private TeamController controller;
+	private Controller controller;
 	public String name;
 	public String cleanname;
 	public Location spawn;
 	private List<String> players;
 	
-	public Team(String name, Location spawn, String players, TeamController instantiate) {
+	public Team(String name, Location spawn, String players, Controller instantiate) {
 		controller = instantiate;
 		this.name = name;
 		this.cleanname = name.toLowerCase();

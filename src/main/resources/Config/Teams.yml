@@ -1,6 +1,9 @@
-Teams: {
+Teams:
   Red:
     - "Player1"
   Blue:
     - "Player2"
-}
+
+Admins:
+  - "Admin1"
+  - "Admin2"
