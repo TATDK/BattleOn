@@ -35,7 +35,7 @@ public class PListener extends PlayerListener {
 	
 	@Override
 	public void onPlayerLogin(PlayerLoginEvent event) {
-		if (!plugin.controller.playerOnTeam(event.getPlayer()) || !plugin.controller.isAdmin(event.getPlayer().getName())) {
+		if (!plugin.controller.playerOnTeam(event.getPlayer()) || !plugin.controller.isAdmin(event.getPlayer())) {
 			event.setResult(Result.KICK_OTHER);
 			event.setKickMessage("You aren't on any team! Contant server admin!");
 		}

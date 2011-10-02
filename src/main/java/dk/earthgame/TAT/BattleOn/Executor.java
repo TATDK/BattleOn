@@ -1,7 +1,5 @@
 package dk.earthgame.TAT.BattleOn;
 
-import java.util.List;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,44 +15,34 @@ public class Executor implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("team")) {
+		if (cmd.getName().equalsIgnoreCase("battle")) {
 			Player player = (Player)sender;
-			if (args[0].equalsIgnoreCase("join") && args.length > 1) {
+			if (args[0].equalsIgnoreCase("on") && plugin.controller.isAdmin((Player)sender)) {
+				if (plugin.running) {
+					sender.sendMessage("The battle is already running.");
+					return true;
+				}
+				plugin.beginBattle();
+			} else if (args[0].equalsIgnoreCase("off") && plugin.controller.isAdmin((Player)sender)) {
+				if (!plugin.running) {
+					sender.sendMessage("There isn't a battle to stop.");
+					return true;
+				}
+				plugin.endBattle();
+			} else if (args[0].equalsIgnoreCase("reload") && plugin.controller.isAdmin((Player)sender)) {
+				plugin.controller.loadTeams();
+				sender.sendMessage("Loaded teams");
+				plugin.controller.loadSpawns();
+				sender.sendMessage("Loaded spawns");
+			} else if (args[0].equalsIgnoreCase("setspawn") && args.length > 1 && plugin.controller.isAdmin((Player)sender)) {
 				if (plugin.controller.teamExists(args[1])) {
-					if (plugin.controller.playerOnTeam(player)) {
-						Team old = plugin.controller.getTeamOfPlayer(player);
-						old.removePlayer(player);
-						sender.sendMessage("Du er fjernet fra team " + old.name);
-					}
-					Team newTeam = plugin.controller.getTeam(args[1]);
-					newTeam.addPlayer(player);
-					sender.sendMessage("Du er tilf�jet til team " + newTeam.name);
+					plugin.controller.getTeam(args[1]).spawn = ((Player)sender).getLocation();
+					sender.sendMessage("Spawn set to your location");
 				} else {
-					sender.sendMessage("Team findes ikke");
+					sender.sendMessage("Team not found");
 				}
-			} else if (args[0].equalsIgnoreCase("leave")) {
-				if (plugin.controller.teamExists(args[1])) {
-					Team old = plugin.controller.getTeamOfPlayer(player);
-					old.removePlayer(player);
-					sender.sendMessage("Du er fjernet fra team " + old.name);
-				} else {
-					sender.sendMessage("Team findes ikke");
-				}
-			} else if (args[0].equalsIgnoreCase("list")) {
-				if (args.length > 1) {
-					if (plugin.controller.teamExists(args[1])) {
-						sender.sendMessage("Team " + args[1]);
-						sender.sendMessage(plugin.controller.getTeam(args[1]).outputPlayers());
-					} else {
-						sender.sendMessage("Team findes ikke");
-					}
-				} else {
-					List<Team> teams = plugin.controller.getTeams();
-					sender.sendMessage(ChatColor.GOLD + "Teams");
-					for (Team t : teams) {
-						sender.sendMessage(t.name);
-					}
-				}
+			} else if (args[0].equalsIgnoreCase("move") && args.length > 2 && plugin.controller.isAdmin((Player)sender)) {
+				
 			} else {
 				showHelp(player);
 			}
@@ -64,22 +52,13 @@ public class Executor implements CommandExecutor {
 	}
 	
 	public void showHelp(Player player) {
-		/*if (plugin.getPerm(player) > 0) {
-			player.sendMessage(ChatColor.GOLD + "Hvordan bruges TeamSpawn");
-			if (plugin.getPerm(player) > 1) {
-				//Admin
-				player.sendMessage("/team .......");
-			}
-			player.sendMessage("/team join <team> - Tilslut et team");
-			player.sendMessage("/team leave - Forlad team");
-			//sender.sendMessage("/team .......");
-		} else {
-			player.sendMessage(ChatColor.DARK_RED + "Du har ikke lov til at bruge TeamSpawn!");
-		}*/
-		player.sendMessage(ChatColor.GOLD + "Hvordan bruges TeamSpawn");
-		player.sendMessage("/team join <team> - Tilslut et team");
-		player.sendMessage("/team leave - Forlad team");
-		player.sendMessage("/team list - Vis teams");
-		player.sendMessage("/team list <team> - Vis spillere p� team");
+		player.sendMessage(ChatColor.GOLD + "BattleOn commands");
+		if (plugin.controller.isAdmin(player)) {
+			player.sendMessage("/battle on - Start battle");
+			player.sendMessage("/battle off - End battle");
+			player.sendMessage("/battle reload - Reload teams and spawns from files");
+			player.sendMessage("/battle setspawn <team> - Set spawn for team");
+			player.sendMessage("/battle move <player> <team> - Move player to team");
+		}
 	}
 }

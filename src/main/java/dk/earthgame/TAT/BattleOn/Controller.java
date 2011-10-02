@@ -19,7 +19,6 @@ import org.bukkit.util.config.Configuration;
 public class Controller {
 	private BattleOn plugin;
 	private List<Team> teams;
-	private List<String> admins;
 	private Configuration TConfig;
 	private Configuration SConfig;
 	
@@ -62,10 +61,9 @@ public class Controller {
 		return false;
 	}
 	
-	public boolean isAdmin(String name) {
-		for (String a : admins)
-			if (name.equalsIgnoreCase(a))
-				return true;
+	public boolean isAdmin(Player player) {
+		if (player.isOp())
+			return true;
 		return false;
 	}
 	
@@ -127,13 +125,11 @@ public class Controller {
 	        		valid = true;
 	        }
 	        
-	        if (!valid) {
+	        if (!valid)
 	        	plugin.log.warning("[BattleOn] UNKNOWN TEAMNAME! " + pairs.getKey());
-	        } else {
+	        else
 	        	teams.add(new Team(pairs.getKey(),new Location(plugin.getServer().getWorlds().get(0),0,0,0),pairs.getValue(),this));
-	        }
 		}
-		admins = (List<String>)TConfig.getProperty("Admins");
 	}
 	
 	void saveTeams() {
@@ -164,11 +160,19 @@ public class Controller {
 	        	for (Team t : teams) {
 	        		if (pairs.getKey().equalsIgnoreCase(t.cleanname)) {
 	        			String[] lvalue = pairs.getValue().split(",");
-	        			Location l = new Location(plugin.getServer().getWorld(lvalue[0]),Double.parseDouble(lvalue[1]),Double.parseDouble(lvalue[2]),Double.parseDouble(lvalue[3]));
+	        			Location l = new Location(plugin.getServer().getWorld(lvalue[0]),Double.parseDouble(lvalue[1]),Double.parseDouble(lvalue[2]),Double.parseDouble(lvalue[3]),Float.parseFloat(lvalue[4]),Float.parseFloat(lvalue[5]));
 	        			t.spawn = l;
 	        		}
 	        	}
 	        }
 		}
+	}
+	
+	void saveSpawns() {
+		HashMap<String, String> savedSpawns = new HashMap<String, String>();
+		for (Team t : teams)
+			savedSpawns.put(t.name, t.spawn.getWorld().getName() + "," + t.spawn.getX() + "," + t.spawn.getY() + "," + t.spawn.getZ() + "," + t.spawn.getYaw() + "," + t.spawn.getPitch());
+		SConfig.setProperty("Spawns", savedSpawns);
+		SConfig.save();
 	}
 }
