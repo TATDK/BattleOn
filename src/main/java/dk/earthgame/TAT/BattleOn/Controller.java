@@ -40,23 +40,24 @@ public class Controller {
 	public Team getTeam(String name) {
 		name = name.toLowerCase();
 		for (Team t : teams)
-			if (t.cleanname.equalsIgnoreCase(name))
+			if (t.name.equalsIgnoreCase(name))
 				return t;
 		return null;
 	}
 	
-	public Team getTeamOfPlayer(Player player) { return getTeam(player.getName()); }
+	public Team getTeamOfPlayer(Player player) { return getTeamOfPlayer(player.getName()); }
 	
 	public Team getTeamOfPlayer(String player) {
 		for (Team t : teams)
-			if (t.containPlayer(player))
+			if (t.containPlayer(player)) {
 				return t;
+			}
 		return null;
 	}
 	
 	public boolean teamExists(String name) {
 		for (Team t : teams)
-			if (t.cleanname.equalsIgnoreCase(name))
+			if (t.name.equalsIgnoreCase(name))
 				return true;
 		return false;
 	}
@@ -142,7 +143,7 @@ public class Controller {
 	}
 	
 	String getSpawnFileLocation() {
-		return plugin.getServer().getWorlds().get(0).getName() + "/Spawn.yml";
+		return plugin.getServer().getWorlds().get(0).getName() + "/Spawns.yml";
 	}
 	
 	void loadSpawns() {
@@ -160,19 +161,24 @@ public class Controller {
 		while (it.hasNext()) {
 	        Map.Entry<String, String> pairs = (Map.Entry<String, String>)it.next();
 	        
-	        if (teams.contains(pairs.getKey())) {
-	        	for (Team t : teams) {
-	        		if (pairs.getKey().equalsIgnoreCase(t.cleanname)) {
-	        			String[] lvalue = pairs.getValue().split(",");
-	        			Location l = new Location(plugin.getServer().getWorld(lvalue[0]),Double.parseDouble(lvalue[1]),Double.parseDouble(lvalue[2]),Double.parseDouble(lvalue[3]),Float.parseFloat(lvalue[4]),Float.parseFloat(lvalue[5]));
-	        			t.spawn = l;
-	        		}
-	        	}
+	        boolean valid = false;
+        	for (Team t : teams) {
+        		if (pairs.getKey().toLowerCase().equalsIgnoreCase(t.name)) {
+        			String[] lvalue = pairs.getValue().split(",");
+        			Location l = new Location(plugin.getServer().getWorld(lvalue[0]),Double.parseDouble(lvalue[1]),Double.parseDouble(lvalue[2]),Double.parseDouble(lvalue[3]),Float.parseFloat(lvalue[4]),Float.parseFloat(lvalue[5]));
+        			t.spawn = l;
+        			valid = true;
+        		}
+        	}
+	        if (!valid) {
+	        	plugin.log.info("Unknown team name " + pairs.getKey());
 	        }
 		}
 	}
 	
 	void saveSpawns() {
+		if (SConfig == null)
+			SConfig = new Configuration(new File(getSpawnFileLocation()));
 		HashMap<String, String> savedSpawns = new HashMap<String, String>();
 		for (Team t : teams)
 			savedSpawns.put(t.name, t.spawn.getWorld().getName() + "," + t.spawn.getX() + "," + t.spawn.getY() + "," + t.spawn.getZ() + "," + t.spawn.getYaw() + "," + t.spawn.getPitch());

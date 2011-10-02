@@ -1,5 +1,6 @@
 package dk.earthgame.TAT.BattleOn;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -8,14 +9,12 @@ import org.bukkit.entity.Player;
 public class Team {
 	private Controller controller;
 	String name;
-	public String cleanname;
 	Location spawn;
 	List<String> players;
 	
 	public Team(String name, Location spawn, List<String> players, Controller instantiate) {
 		controller = instantiate;
 		this.name = name;
-		this.cleanname = name.toLowerCase();
 		this.spawn = spawn;
 		this.players = players;
 	}
@@ -36,6 +35,8 @@ public class Team {
 	public boolean containPlayer(Player p) { return containPlayer(p.getName()); }
 	
 	public boolean containPlayer(String p) {
+		if (players == null)
+			players = new ArrayList<String>();
 		return players.contains(p.toLowerCase());
 	}
 

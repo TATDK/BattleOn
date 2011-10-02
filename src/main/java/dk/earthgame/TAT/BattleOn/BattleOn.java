@@ -53,17 +53,19 @@ public class BattleOn extends JavaPlugin {
 					running = true;
 					Player[] players = getServer().getOnlinePlayers();
 					for (Player p : players) {
-						if (!controller.playerOnTeam(p))
+						if (!controller.playerOnTeam(p) && !controller.isAdmin(p))
 							p.kickPlayer("You aren't on any teams!");
 						else {
-							if (!p.isDead())
+							if (!p.isDead() && !controller.isAdmin(p)) {
 								p.teleport(controller.getTeamOfPlayer(p).spawn);
+							}
 							p.setFoodLevel(17);
 							p.setHealth(20);
 							p.getInventory().clear();
 						}
 					}
 					getServer().broadcastMessage("Battle has begun!");
+					timeleft = 30+broadcastInterval;
 					jobID = getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
 						@Override
 						public void run() {
@@ -82,7 +84,9 @@ public class BattleOn extends JavaPlugin {
 	
 	void endBattle() {
 		if (running) {
+			running = false;
 			getServer().getScheduler().cancelTask(jobID);
+			getServer().broadcastMessage("Battle has ended!");
 		}
 	}
 }

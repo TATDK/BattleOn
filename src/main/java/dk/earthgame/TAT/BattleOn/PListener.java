@@ -1,13 +1,11 @@
 package dk.earthgame.TAT.BattleOn;
 
 import org.bukkit.DyeColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Wool;
 
 public class PListener extends PlayerListener {
@@ -21,15 +19,10 @@ public class PListener extends PlayerListener {
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		Player p = event.getPlayer();
 		if (plugin.running) {
-			p.teleport(plugin.controller.getTeamOfPlayer(p).spawn);
-			ItemStack[] armor = new ItemStack[4];
-			armor[0] = new ItemStack(Material.AIR);
+			event.setRespawnLocation(plugin.controller.getTeamOfPlayer(p).spawn);
 			Wool armorWool = new Wool();
 			armorWool.setColor(DyeColor.valueOf(plugin.controller.getTeamOfPlayer(p).name.toUpperCase()));
-			armor[1] = armorWool.toItemStack();
-			armor[2] = new ItemStack(Material.AIR);
-			armor[3] = new ItemStack(Material.AIR);
-			p.getInventory().setArmorContents(armor);
+			p.getInventory().setChestplate(armorWool.toItemStack());
 		}
 	}
 	
