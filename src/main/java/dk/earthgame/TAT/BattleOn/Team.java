@@ -7,10 +7,10 @@ import org.bukkit.entity.Player;
 
 public class Team {
 	private Controller controller;
-	public String name;
+	String name;
 	public String cleanname;
-	public Location spawn;
-	private List<String> players;
+	Location spawn;
+	List<String> players;
 	
 	public Team(String name, Location spawn, List<String> players, Controller instantiate) {
 		controller = instantiate;

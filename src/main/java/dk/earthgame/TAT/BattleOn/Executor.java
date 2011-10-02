@@ -36,13 +36,22 @@ public class Executor implements CommandExecutor {
 				sender.sendMessage("Loaded spawns");
 			} else if (args[0].equalsIgnoreCase("setspawn") && args.length > 1 && plugin.controller.isAdmin((Player)sender)) {
 				if (plugin.controller.teamExists(args[1])) {
+					plugin.controller.createDefaultConfigFiles("Spawns.yml",plugin.controller.getSpawnFileLocation());
 					plugin.controller.getTeam(args[1]).spawn = ((Player)sender).getLocation();
+					plugin.controller.saveSpawns();
 					sender.sendMessage("Spawn set to your location");
 				} else {
 					sender.sendMessage("Team not found");
 				}
 			} else if (args[0].equalsIgnoreCase("move") && args.length > 2 && plugin.controller.isAdmin((Player)sender)) {
-				
+				if (!plugin.controller.teamExists(args[1])) {
+					if (plugin.controller.playerOnTeam(args[1]))
+						plugin.controller.getTeamOfPlayer(args[1]).removePlayer(args[1]);
+					plugin.controller.getTeam(args[2]).addPlayer(args[1]);
+					plugin.controller.saveTeams();
+				} else {
+					sender.sendMessage("Team not found");
+				}
 			} else {
 				showHelp(player);
 			}

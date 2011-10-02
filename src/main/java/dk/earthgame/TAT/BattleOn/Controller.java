@@ -25,7 +25,7 @@ public class Controller {
 	public Controller(BattleOn instantiate) {
 		plugin = instantiate;
 		teams = new ArrayList<Team>();
-		TConfig = new Configuration(new File(plugin.getDataFolder(), "/../../Teams.yml"));
+		TConfig = new Configuration(new File("Teams.yml"));
 	}
 	
 	public boolean playerOnTeam(Player player) { return playerOnTeam(player.getName()); }
@@ -71,11 +71,10 @@ public class Controller {
 		return teams;
 	}
 	
-	void createDefaultConfigFiles() {
-        String name = "Teams.yml";
-        File actual = new File(plugin.getDataFolder(), "/../../" + name);
+	void createDefaultConfigFiles(String filename,String saveas) {
+        File actual = new File(saveas);
         if (!actual.exists()) {
-            InputStream input = BattleOn.class.getResourceAsStream("/Config/" + name);
+            InputStream input = BattleOn.class.getResourceAsStream("/Config/" + filename);
             if (input != null) {
                 FileOutputStream output = null;
 
@@ -86,7 +85,6 @@ public class Controller {
                     while ((length = input.read(buf)) > 0) {
                         output.write(buf, 0, length);
                     }
-                    
                     plugin.log.info("Default team file created!");
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -110,9 +108,6 @@ public class Controller {
 
 	@SuppressWarnings("unchecked")
 	void loadTeams() {
-		if (!new File(plugin.getDataFolder(), "/../../Teams.yml").exists())
-			createDefaultConfigFiles();
-		
 		TConfig.load();
 		
 		HashMap<String, List<String>> loadedTeams = (HashMap<String, List<String>>)TConfig.getProperty("Teams");
@@ -136,16 +131,22 @@ public class Controller {
 	}
 	
 	void saveTeams() {
+		HashMap<String, List<String>> savedTeams = new HashMap<String, List<String>>();
 		
+		for (Team t : teams) {
+			savedTeams.put(t.name, t.players);
+		}
+		
+		TConfig.setProperty("Teams", savedTeams);
+		TConfig.save();
+	}
+	
+	String getSpawnFileLocation() {
+		return plugin.getServer().getWorlds().get(0).getName() + "/Spawn.yml";
 	}
 	
 	void loadSpawns() {
-		SConfig = new Configuration(new File(plugin.getDataFolder(), "/../../" + plugin.getServer().getWorlds().get(0).getName() + "/Spawn.yml"));
-		loadSpawnsWorker();
-	}
-	
-	void loadSpawns(Player player) {
-		SConfig = new Configuration(new File(plugin.getDataFolder(), "/../../" + player.getWorld().getName() + "/Spawns.yml"));
+		SConfig = new Configuration(new File(getSpawnFileLocation()));
 		loadSpawnsWorker();
 	}
 	

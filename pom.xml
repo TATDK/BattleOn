@@ -66,6 +66,13 @@
           <include>plugin.yml</include>
         </includes>
       </resource>
+      <resource>
+        <targetPath>Config/</targetPath>
+        <directory>${basedir}/src/main/resources/Config/</directory>
+        <includes>
+            <include>*</include>
+        </includes>
+      </resource>
     </resources>
 
     <plugins>

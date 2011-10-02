@@ -33,7 +33,7 @@ public class BattleOn extends JavaPlugin {
 		
 		getCommand("battle").setExecutor(Executor);
 		
-		controller.createDefaultConfigFiles();
+		controller.createDefaultConfigFiles("Teams.yml","Teams.yml");
 		controller.loadTeams();
 	}
 
@@ -45,6 +45,7 @@ public class BattleOn extends JavaPlugin {
 	void beginBattle() {
 		if (!running) {
 			final BattleOn plugin = this;
+			controller.loadSpawns();
 			getServer().broadcastMessage("Battle begins in 5 seconds!");
 			getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
 				@Override
