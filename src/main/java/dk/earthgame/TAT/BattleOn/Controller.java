@@ -110,6 +110,9 @@ public class Controller {
 
 	@SuppressWarnings("unchecked")
 	void loadTeams() {
+		if (!new File(plugin.getDataFolder(), "/../../Teams.yml").exists())
+			createDefaultConfigFiles();
+		
 		TConfig.load();
 		
 		HashMap<String, List<String>> loadedTeams = (HashMap<String, List<String>>)TConfig.getProperty("Teams");
