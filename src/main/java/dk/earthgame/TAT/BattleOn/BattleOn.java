@@ -31,7 +31,7 @@ public class BattleOn extends JavaPlugin {
 		pm.registerEvent(Type.PLAYER_RESPAWN, Plistener, Priority.Normal, this);
 		pm.registerEvent(Type.PLAYER_JOIN, Plistener, Priority.Normal, this);
 		
-		getCommand("team").setExecutor(Executor);
+		getCommand("battle").setExecutor(Executor);
 		
 		controller.createDefaultConfigFiles();
 		controller.loadTeams();
