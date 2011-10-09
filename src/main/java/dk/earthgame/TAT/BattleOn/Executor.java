@@ -11,22 +11,25 @@ import org.bukkit.entity.Player;
 public class Executor implements CommandExecutor {
 	private BattleOn plugin;
 	int block = 0;
-	int minY = 3;
-	int maxY = 128;
 	int minX = -202;
 	int maxX = 73;
+	int minY = 3;
+	int maxY = 128;
 	int minZ = -129;
 	int maxZ = 170;
+	int curX;
+	int curY;
+	int curZ;
 	int jobID;
 	int insertBlock;
 	
 	public Executor(BattleOn instantiate) {
 		plugin = instantiate;
-		
-		minY = 100;
-		maxY = 112;
+
 		minX = 100;
 		maxX = 112;
+		minY = 100;
+		maxY = 112;
 		minZ = 100;
 		maxZ = 112;
 	}
@@ -40,26 +43,34 @@ public class Executor implements CommandExecutor {
 					Date before = new Date();
 					block = 0;
 					insertBlock = Integer.parseInt(args[1]);
+					
+					curX = minX;
+					curY = maxY;
+					curZ = minZ;
+					
 					plugin.getServer().getWorlds().get(0).setAutoSave(false);
 					jobID = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
 						@Override
 						public void run() {
 							int run = 0;
-							while (true) {
+							while (run != 1755) {
 								block += 1;
 								run += 1;
 								
-								int y = maxY-(block/(maxX-minX)*(maxZ-minZ));
-								int x = ((block-((y-1)*((maxX-minX)*(maxZ-minZ))))*(maxZ-minZ))+minX;
-								int z = (block-((y-1)*((maxX-minX)*(maxZ-minZ)))-((x-1)*(maxZ-minZ)))+minZ;
+								curZ++;
+								if (curZ > maxZ) {
+									curZ = minZ;
+									curX++;
+								}
+								if (curX > maxX) {
+									curX = minX;
+									curY++;
+								}
 								
-								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setTypeId(insertBlock);
+								plugin.getServer().getWorlds().get(0).getBlockAt(curX, curY, curZ).setTypeId(insertBlock);
 								
-								if (block == (maxX-minX)*(maxZ-minZ)*(maxY-minY))
+								if (curY > maxY)
 									plugin.getServer().getScheduler().cancelTask(jobID);
-								
-								if (run == 1755)
-									break;
 							}
 						}
 					}, 0, 20);
