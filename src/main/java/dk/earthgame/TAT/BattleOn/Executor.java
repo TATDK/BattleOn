@@ -27,7 +27,6 @@ public class Executor implements CommandExecutor {
 			int maxZ = 170;
 			if (args.length > 0) {
 				if (args[0].equalsIgnoreCase("bedrock") && plugin.controller.isAdmin(player)) {
-					Date before = new Date();
 					for (int x=minX;x<maxX;x++) {
 						for (int y=0;y<minY;y++) {
 							for (int z=minZ;z<maxZ;z++) {
@@ -35,8 +34,6 @@ public class Executor implements CommandExecutor {
 							}
 						}
 					}
-					Date now = new Date();
-					plugin.log.info(Material.getMaterial(Integer.parseInt(args[1])).name() + ": " + (now.getTime()-before.getTime()));
 				} else if (args[0].equalsIgnoreCase("fuck") && args.length > 1 && plugin.controller.isAdmin(player)) {
 					Date before = new Date();
 					for (int x=minX;x<maxX;x++) {
