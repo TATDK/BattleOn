@@ -19,6 +19,7 @@ public class BattleOn extends JavaPlugin {
 	public Controller controller = new Controller(this);
 	private PListener Plistener = new PListener(this);
 	private EListener Elistener = new EListener();
+	private BListener Blistener = new BListener();
 	private Executor Executor = new Executor(this);
 	
 	boolean running;
@@ -36,6 +37,7 @@ public class BattleOn extends JavaPlugin {
 		pm.registerEvent(Type.PLAYER_JOIN,       Plistener, Priority.Normal, this);
 		pm.registerEvent(Type.FOOD_LEVEL_CHANGE, Elistener, Priority.Normal, this);
 		pm.registerEvent(Type.ENTITY_DAMAGE,     Elistener, Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_BREAK,       Blistener, Priority.Normal, this);
 		
 		getCommand("battle").setExecutor(Executor);
 		
