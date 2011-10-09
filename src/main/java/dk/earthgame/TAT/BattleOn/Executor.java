@@ -22,6 +22,8 @@ public class Executor implements CommandExecutor {
     int curZ;
     int jobID;
     int insertBlock;
+    Date before;
+    boolean finish;
 
     public Executor(BattleOn instantiate) {
         plugin = instantiate;
@@ -33,6 +35,15 @@ public class Executor implements CommandExecutor {
         minZ = 100;
         maxZ = 112;
     }
+    
+    private void finishJob() {
+    	finish = true;
+    	plugin.getServer().getScheduler().cancelTask(jobID);
+    	plugin.getServer().getWorlds().get(0).setAutoSave(true);
+        plugin.getServer().getWorlds().get(0).save();
+        Date now = new Date();
+        plugin.log.info(Material.getMaterial(insertBlock).name() + ": " + (now.getTime()-before.getTime()));
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
@@ -40,7 +51,8 @@ public class Executor implements CommandExecutor {
             Player player = (Player)sender;
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("fuck") && args.length > 1 && plugin.controller.isAdmin(player)) {
-                    Date before = new Date();
+                	finish = false;
+                    before = new Date();
                     block = 0;
                     insertBlock = Integer.parseInt(args[1]);
 
@@ -52,33 +64,32 @@ public class Executor implements CommandExecutor {
                     jobID = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
                         @Override
                         public void run() {
-                            int run = 0;
-                            while (run != 1755) {
-                                block += 1;
-                                run += 1;
-
-                                plugin.getServer().getWorlds().get(0).getBlockAt(curX, curY, curZ).setTypeId(insertBlock);
-
-                                curZ++;
-                                if (curZ > maxZ) {
-                                    curZ = minZ;
-                                    curX++;
-                                }
-                                if (curX > maxX) {
-                                    curX = minX;
-                                    curY--;
-                                }
-                                if (curY < minY) {
-                                    plugin.getServer().getScheduler().cancelTask(jobID);
-                                    break;
-                                }
-                            }
+                        	if (!finish) {
+	                            int runs = 0;
+	                            while (runs < 100) {
+	                                block++;
+	                                runs++;
+	
+	                                plugin.log.info("X:" + curX + " Y:" + curY + " Z:" + curZ + " Blocknr:" + block);
+	                                plugin.getServer().getWorlds().get(0).getBlockAt(curX, curY, curZ).setTypeId(insertBlock);
+	
+	                                curZ++;
+	                                if (curZ > maxZ) {
+	                                    curZ = minZ;
+	                                    curX++;
+	                                }
+	                                if (curX > maxX) {
+	                                    curX = minX;
+	                                    curY--;
+	                                }
+	                                if (curY < minY) {
+	                                    finishJob();
+	                                    break;
+	                                }
+	                            }
+                        	}
                         }
                     }, 0, 1);
-                    plugin.getServer().getWorlds().get(0).setAutoSave(true);
-                    plugin.getServer().getWorlds().get(0).save();
-                    Date now = new Date();
-                    plugin.log.info(Material.getMaterial(Integer.parseInt(args[1])).name() + ": " + (now.getTime()-before.getTime()));
                 } else if (args[0].equalsIgnoreCase("on") && plugin.controller.isAdmin(player)) {
                     if (plugin.running) {
                         sender.sendMessage("The battle is already running.");
