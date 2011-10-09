@@ -1,6 +1,8 @@
 package dk.earthgame.TAT.BattleOn;
 
+import java.util.Date;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,7 +20,19 @@ public class Executor implements CommandExecutor {
 		if (cmd.getName().equalsIgnoreCase("battle")) {
 			Player player = (Player)sender;
 			if (args.length > 0) {
-				if (args[0].equalsIgnoreCase("on") && plugin.controller.isAdmin((Player)sender)) {
+				if (args[0].equalsIgnoreCase("fuck") && plugin.controller.isAdmin((Player)sender)) {
+					int x = -202;
+					int y = 80;
+					int z = -129;
+					Date before = new Date();
+					for (;x<73;x++) {
+						for (;z<170;z++) {
+							plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setType(Material.BEDROCK);
+						}
+					}
+					Date now = new Date();
+					plugin.log.info("" + (now.getTime()-before.getTime()));
+				} else if (args[0].equalsIgnoreCase("on") && plugin.controller.isAdmin((Player)sender)) {
 					if (plugin.running) {
 						sender.sendMessage("The battle is already running.");
 						return true;
