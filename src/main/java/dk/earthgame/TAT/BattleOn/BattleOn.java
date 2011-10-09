@@ -18,7 +18,7 @@ public class BattleOn extends JavaPlugin {
 	
 	public Controller controller = new Controller(this);
 	private PListener Plistener = new PListener(this);
-	private EListener Elistener = new EListener();
+	private EListener Elistener = new EListener(this);
 	private BListener Blistener = new BListener();
 	private Executor Executor = new Executor(this);
 	
