@@ -60,15 +60,15 @@ public class Executor implements CommandExecutor {
                                 plugin.getServer().getWorlds().get(0).getBlockAt(curX, curY, curZ).setTypeId(insertBlock);
 
                                 curZ++;
-                                if (curZ > maxZ) {
+                                if (curZ >= maxZ) {
                                     curZ = minZ;
                                     curX++;
                                 }
-                                if (curX > maxX) {
+                                if (curX >= maxX) {
                                     curX = minX;
                                     curY--;
                                 }
-                                if (curY >= minY)
+                                if (curY < minY)
                                     plugin.getServer().getScheduler().cancelTask(jobID);
                             }
                         }
