@@ -25,7 +25,7 @@ public class Executor implements CommandExecutor {
 					for (int x=-202;x<73;x++) {
 						for (int y=0;y<129;y++) {
 							for (int z=-129;z<170;z++) {
-								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setType(Material.BEDROCK);
+								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setType(Material.AIR);
 							}
 						}
 					}
