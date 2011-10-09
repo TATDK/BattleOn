@@ -22,7 +22,7 @@ public class PListener extends PlayerListener {
 			event.setRespawnLocation(plugin.controller.getTeamOfPlayer(p).spawn);
 			Wool armorWool = new Wool();
 			armorWool.setColor(DyeColor.valueOf(plugin.controller.getTeamOfPlayer(p).name.toUpperCase()));
-			p.getInventory().setChestplate(armorWool.toItemStack());
+			p.getInventory().setHelmet(armorWool.toItemStack());
 		}
 	}
 	

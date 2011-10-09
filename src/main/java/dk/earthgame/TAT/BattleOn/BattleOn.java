@@ -2,9 +2,12 @@ package dk.earthgame.TAT.BattleOn;
 
 import java.util.logging.Logger;
 
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.material.Wool;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,11 +18,12 @@ public class BattleOn extends JavaPlugin {
 	
 	public Controller controller = new Controller(this);
 	private PListener Plistener = new PListener(this);
+	private EListener Elistener = new EListener();
 	private Executor Executor = new Executor(this);
 	
 	boolean running;
 	private int timeleft;
-	private int broadcastInterval = 1;
+	private int broadcastInterval = 5;
 	private int jobID;
 	
 	@Override
@@ -28,8 +32,10 @@ public class BattleOn extends JavaPlugin {
 		log.info(description.getName() + " v." + description.getVersion() + " startet!");
 		
 		PluginManager pm = this.getServer().getPluginManager();
-		pm.registerEvent(Type.PLAYER_RESPAWN, Plistener, Priority.Normal, this);
-		pm.registerEvent(Type.PLAYER_JOIN, Plistener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_RESPAWN,    Plistener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_JOIN,       Plistener, Priority.Normal, this);
+		pm.registerEvent(Type.FOOD_LEVEL_CHANGE, Elistener, Priority.Normal, this);
+		pm.registerEvent(Type.ENTITY_DAMAGE,     Elistener, Priority.Normal, this);
 		
 		getCommand("battle").setExecutor(Executor);
 		
@@ -56,12 +62,16 @@ public class BattleOn extends JavaPlugin {
 						if (!controller.playerOnTeam(p) && !controller.isAdmin(p))
 							p.kickPlayer("You aren't on any teams!");
 						else {
-							if (!p.isDead() && !controller.isAdmin(p)) {
-								p.teleport(controller.getTeamOfPlayer(p).spawn);
-							}
 							p.setFoodLevel(17);
 							p.setHealth(20);
-							p.getInventory().clear();
+							if (!controller.isAdmin(p)) {
+								if (!p.isDead())
+									p.teleport(controller.getTeamOfPlayer(p).spawn);
+								p.getInventory().clear();
+								Wool armorWool = new Wool();
+								armorWool.setColor(DyeColor.valueOf(controller.getTeamOfPlayer(p).name.toUpperCase()));
+								p.getInventory().setHelmet(armorWool.toItemStack());
+							}
 						}
 					}
 					getServer().broadcastMessage("Battle has begun!");
@@ -87,6 +97,19 @@ public class BattleOn extends JavaPlugin {
 			running = false;
 			getServer().getScheduler().cancelTask(jobID);
 			getServer().broadcastMessage("Battle has ended!");
+			Player[] players = getServer().getOnlinePlayers();
+			Location finalSpawn = null;
+			for (Player p : players) {
+				if (finalSpawn == null)
+					finalSpawn = p.getWorld().getSpawnLocation();
+				p.setFoodLevel(20);
+				p.setHealth(20);
+				if (!controller.isAdmin(p)) {
+					if (!p.isDead())
+						p.teleport(finalSpawn);
+					p.getInventory().clear();
+				}
+			}
 		}
 	}
 }
