@@ -22,6 +22,13 @@ public class Executor implements CommandExecutor {
 	
 	public Executor(BattleOn instantiate) {
 		plugin = instantiate;
+		
+		minY = 100;
+		maxY = 112;
+		minX = 100;
+		maxX = 112;
+		minZ = 100;
+		maxZ = 112;
 	}
 
 	@Override
