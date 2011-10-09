@@ -33,6 +33,7 @@ public class Executor implements CommandExecutor {
 					Date before = new Date();
 					block = 0;
 					insertBlock = Integer.parseInt(args[1]);
+					plugin.getServer().getWorlds().get(0).setAutoSave(false);
 					jobID = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
 						@Override
 						public void run() {
@@ -55,6 +56,8 @@ public class Executor implements CommandExecutor {
 							}
 						}
 					}, 0, 20);
+					plugin.getServer().getWorlds().get(0).setAutoSave(true);
+					plugin.getServer().getWorlds().get(0).save();
 					Date now = new Date();
 					plugin.log.info(Material.getMaterial(Integer.parseInt(args[1])).name() + ": " + (now.getTime()-before.getTime()));
 				} else if (args[0].equalsIgnoreCase("on") && plugin.controller.isAdmin(player)) {
