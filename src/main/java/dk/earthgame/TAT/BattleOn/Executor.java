@@ -66,13 +66,13 @@ public class Executor implements CommandExecutor {
                                 }
                                 if (curX > maxX) {
                                     curX = minX;
-                                    curY++;
+                                    curY--;
                                 }
-                                if (curY > maxY)
+                                if (curY >= minY)
                                     plugin.getServer().getScheduler().cancelTask(jobID);
                             }
                         }
-                    }, 0, 20);
+                    }, 0, 1);
                     plugin.getServer().getWorlds().get(0).setAutoSave(true);
                     plugin.getServer().getWorlds().get(0).save();
                     Date now = new Date();
