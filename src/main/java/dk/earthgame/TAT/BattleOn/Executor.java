@@ -21,13 +21,12 @@ public class Executor implements CommandExecutor {
 			Player player = (Player)sender;
 			if (args.length > 0) {
 				if (args[0].equalsIgnoreCase("fuck") && plugin.controller.isAdmin((Player)sender)) {
-					int x = -202;
-					int y = 80;
-					int z = -129;
 					Date before = new Date();
-					for (;x<73;x++) {
-						for (;z<170;z++) {
-							plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setType(Material.BEDROCK);
+					for (int x=-202;x<73;x++) {
+						for (int y=0;y<129;y++) {
+							for (int z=-129;z<170;z++) {
+								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setType(Material.BEDROCK);
+							}
 						}
 					}
 					Date now = new Date();
