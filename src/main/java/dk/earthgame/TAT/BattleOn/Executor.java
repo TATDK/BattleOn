@@ -41,7 +41,7 @@ public class Executor implements CommandExecutor {
 								block += 1;
 								run += 1;
 								
-								int y = (block/(maxX-minX)*(maxZ-minZ))+minY;
+								int y = maxY-(block/(maxX-minX)*(maxZ-minZ));
 								int x = ((block-((y-1)*((maxX-minX)*(maxZ-minZ))))*(maxZ-minZ))+minX;
 								int z = (block-((y-1)*((maxX-minX)*(maxZ-minZ)))-((x-1)*(maxZ-minZ)))+minZ;
 								
@@ -54,7 +54,7 @@ public class Executor implements CommandExecutor {
 									break;
 							}
 						}
-					}, 0, 1);
+					}, 0, 20);
 					Date now = new Date();
 					plugin.log.info(Material.getMaterial(Integer.parseInt(args[1])).name() + ": " + (now.getTime()-before.getTime()));
 				} else if (args[0].equalsIgnoreCase("on") && plugin.controller.isAdmin(player)) {
