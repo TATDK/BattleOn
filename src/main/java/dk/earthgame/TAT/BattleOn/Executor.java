@@ -10,6 +10,15 @@ import org.bukkit.entity.Player;
 
 public class Executor implements CommandExecutor {
 	private BattleOn plugin;
+	int block = 0;
+	int minY = 3;
+	int maxY = 128;
+	int minX = -202;
+	int maxX = 73;
+	int minZ = -129;
+	int maxZ = 170;
+	int jobID;
+	int insertBlock;
 	
 	public Executor(BattleOn instantiate) {
 		plugin = instantiate;
@@ -19,30 +28,33 @@ public class Executor implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("battle")) {
 			Player player = (Player)sender;
-			int minY = 3;
-			int maxY = 128;
-			int minX = -202;
-			int maxX = 73;
-			int minZ = -129;
-			int maxZ = 170;
 			if (args.length > 0) {
-				if (args[0].equalsIgnoreCase("bedrock") && plugin.controller.isAdmin(player)) {
-					for (int x=minX;x<maxX;x++) {
-						for (int y=0;y<minY;y++) {
-							for (int z=minZ;z<maxZ;z++) {
-								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setType(Material.BEDROCK);
-							}
-						}
-					}
-				} else if (args[0].equalsIgnoreCase("fuck") && args.length > 1 && plugin.controller.isAdmin(player)) {
+				if (args[0].equalsIgnoreCase("fuck") && args.length > 1 && plugin.controller.isAdmin(player)) {
 					Date before = new Date();
-					for (int x=minX;x<maxX;x++) {
-						for (int y=minY;y<maxY;y++) {
-							for (int z=minZ;z<maxZ;z++) {
-								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setTypeId(Integer.parseInt(args[1]));
+					block = 0;
+					insertBlock = Integer.parseInt(args[1]);
+					jobID = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
+						@Override
+						public void run() {
+							int run = 0;
+							while (true) {
+								block += 1;
+								run += 1;
+								
+								int y = (block/(maxX-minX)*(maxZ-minZ))+minY;
+								int x = ((block-((y-1)*((maxX-minX)*(maxZ-minZ))))*(maxZ-minZ))+minX;
+								int z = (block-((y-1)*((maxX-minX)*(maxZ-minZ)))-((x-1)*(maxZ-minZ)))+minZ;
+								
+								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setTypeId(insertBlock);
+								
+								if (block == (maxX-minX)*(maxZ-minZ)*(maxY-minY))
+									plugin.getServer().getScheduler().cancelTask(jobID);
+								
+								if (run == 1755)
+									break;
 							}
 						}
-					}
+					}, 0, 1);
 					Date now = new Date();
 					plugin.log.info(Material.getMaterial(Integer.parseInt(args[1])).name() + ": " + (now.getTime()-before.getTime()));
 				} else if (args[0].equalsIgnoreCase("on") && plugin.controller.isAdmin(player)) {
