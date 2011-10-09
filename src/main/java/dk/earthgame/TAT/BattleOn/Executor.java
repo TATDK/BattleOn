@@ -68,7 +68,7 @@ public class Executor implements CommandExecutor {
                                     curX = minX;
                                     curY--;
                                 }
-                                if (curY > minY) {
+                                if (curY < minY) {
                                     plugin.getServer().getScheduler().cancelTask(jobID);
                                     break;
                                 }
