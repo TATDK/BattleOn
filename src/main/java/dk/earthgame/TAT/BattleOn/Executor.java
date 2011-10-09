@@ -19,56 +19,53 @@ public class Executor implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("battle")) {
 			Player player = (Player)sender;
+			int minY = 3;
+			int maxY = 128;
+			int minX = -202;
+			int maxX = 73;
+			int minZ = -129;
+			int maxZ = 170;
 			if (args.length > 0) {
-				if (args[0].equalsIgnoreCase("fuck") && plugin.controller.isAdmin((Player)sender)) {
+				if (args[0].equalsIgnoreCase("bedrock") && plugin.controller.isAdmin(player)) {
 					Date before = new Date();
-					for (int x=-202;x<73;x++) {
-						for (int y=0;y<129;y++) {
-							for (int z=-129;z<170;z++) {
-								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setType(Material.SAND);
+					for (int x=minX;x<maxX;x++) {
+						for (int y=0;y<minY;y++) {
+							for (int z=minZ;z<maxZ;z++) {
+								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setType(Material.BEDROCK);
 							}
 						}
 					}
 					Date now = new Date();
-					plugin.log.info("SAND: " + (now.getTime()-before.getTime()));
-					before = new Date();
-					for (int x=-202;x<73;x++) {
-						for (int y=0;y<129;y++) {
-							for (int z=-129;z<170;z++) {
-								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setType(Material.WATER);
+					plugin.log.info(Material.getMaterial(Integer.parseInt(args[1])).name() + ": " + (now.getTime()-before.getTime()));
+				} else if (args[0].equalsIgnoreCase("fuck") && args.length > 1 && plugin.controller.isAdmin(player)) {
+					Date before = new Date();
+					for (int x=minX;x<maxX;x++) {
+						for (int y=minY;y<maxY;y++) {
+							for (int z=minZ;z<maxZ;z++) {
+								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setTypeId(Integer.parseInt(args[1]));
 							}
 						}
 					}
-					now = new Date();
-					plugin.log.info("WATER: " + (now.getTime()-before.getTime()));
-					before = new Date();
-					for (int x=-202;x<73;x++) {
-						for (int y=0;y<129;y++) {
-							for (int z=-129;z<170;z++) {
-								plugin.getServer().getWorlds().get(0).getBlockAt(x, y, z).setType(Material.DIRT);
-							}
-						}
-					}
-					now = new Date();
-					plugin.log.info("DIRT: " + (now.getTime()-before.getTime()));
-				} else if (args[0].equalsIgnoreCase("on") && plugin.controller.isAdmin((Player)sender)) {
+					Date now = new Date();
+					plugin.log.info(Material.getMaterial(Integer.parseInt(args[1])).name() + ": " + (now.getTime()-before.getTime()));
+				} else if (args[0].equalsIgnoreCase("on") && plugin.controller.isAdmin(player)) {
 					if (plugin.running) {
 						sender.sendMessage("The battle is already running.");
 						return true;
 					}
 					plugin.beginBattle();
-				} else if (args[0].equalsIgnoreCase("off") && plugin.controller.isAdmin((Player)sender)) {
+				} else if (args[0].equalsIgnoreCase("off") && plugin.controller.isAdmin(player)) {
 					if (!plugin.running) {
 						sender.sendMessage("There isn't a battle to stop.");
 						return true;
 					}
 					plugin.endBattle();
-				} else if (args[0].equalsIgnoreCase("reload") && plugin.controller.isAdmin((Player)sender)) {
+				} else if (args[0].equalsIgnoreCase("reload") && plugin.controller.isAdmin(player)) {
 					plugin.controller.loadTeams();
 					sender.sendMessage("Loaded teams");
 					plugin.controller.loadSpawns();
 					sender.sendMessage("Loaded spawns");
-				} else if (args[0].equalsIgnoreCase("setspawn") && args.length > 1 && plugin.controller.isAdmin((Player)sender)) {
+				} else if (args[0].equalsIgnoreCase("setspawn") && args.length > 1 && plugin.controller.isAdmin(player)) {
 					if (plugin.controller.teamExists(args[1])) {
 						plugin.controller.createDefaultConfigFiles("Spawns.yml",plugin.controller.getSpawnFileLocation());
 						plugin.controller.getTeam(args[1]).spawn = ((Player)sender).getLocation();
@@ -77,7 +74,7 @@ public class Executor implements CommandExecutor {
 					} else {
 						sender.sendMessage("Team not found");
 					}
-				} else if (args[0].equalsIgnoreCase("move") && args.length > 2 && plugin.controller.isAdmin((Player)sender)) {
+				} else if (args[0].equalsIgnoreCase("move") && args.length > 2 && plugin.controller.isAdmin(player)) {
 					if (!plugin.controller.teamExists(args[1])) {
 						if (plugin.controller.playerOnTeam(args[1]))
 							plugin.controller.getTeamOfPlayer(args[1]).removePlayer(args[1]);
