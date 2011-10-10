@@ -1,8 +1,9 @@
 package dk.earthgame.TAT.BattleOn;
 
 import java.util.Date;
+import java.util.Random;
+
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 public class Executor implements CommandExecutor {
     private BattleOn plugin;
     int block = 0;
+    int totalBlocks;
     int minX = -202;
     int maxX = 73;
     int minY = 3;
@@ -24,6 +26,7 @@ public class Executor implements CommandExecutor {
     int insertBlock;
     Date before;
     boolean finish;
+    int[][][] blocks;
 
     public Executor(BattleOn instantiate) {
         plugin = instantiate;
@@ -37,12 +40,15 @@ public class Executor implements CommandExecutor {
     }
     
     private void finishJob() {
-    	finish = true;
-    	plugin.getServer().getScheduler().cancelTask(jobID);
-    	plugin.getServer().getWorlds().get(0).setAutoSave(true);
-        plugin.getServer().getWorlds().get(0).save();
-        Date now = new Date();
-        plugin.log.info(Material.getMaterial(insertBlock).name() + ": " + (now.getTime()-before.getTime()));
+    	if (!finish) {
+	    	finish = true;
+	    	plugin.getServer().getScheduler().cancelTask(jobID);
+	    	
+	    	plugin.getServer().getWorlds().get(0).setAutoSave(true);
+	        plugin.getServer().getWorlds().get(0).save();
+	        Date now = new Date();
+	        plugin.log.info("REBUILDING TOOK " + (now.getTime()-before.getTime()) + "ms");
+    	}
     }
 
     @Override
@@ -50,29 +56,50 @@ public class Executor implements CommandExecutor {
         if (cmd.getName().equalsIgnoreCase("battle")) {
             Player player = (Player)sender;
             if (args.length > 0) {
-                if (args[0].equalsIgnoreCase("fuck") && args.length > 1 && plugin.controller.isAdmin(player)) {
+                if (args[0].equalsIgnoreCase("fuck") && plugin.controller.isAdmin(player)) {
+                	blocks = new int[maxX-minX+1][maxY-minY+1][maxZ-minZ+1];
+                	totalBlocks = (maxX-minX+1)*(maxY-minY+1)*(maxZ-minZ+1);
                 	finish = false;
                     before = new Date();
+                	Random ran = new Random();
                     block = 0;
-                    insertBlock = Integer.parseInt(args[1]);
-
+                    if (args.length > 1)
+                    	insertBlock = Integer.parseInt(args[1]);
+                    else
+                    	insertBlock = -1;
+                    
                     curX = minX;
                     curY = maxY;
                     curZ = minZ;
 
                     plugin.getServer().getWorlds().get(0).setAutoSave(false);
+                    
+                    
+                    for (int x=0;x < (maxX-minX)+1;x++) {
+        	    		for (int y=0;y < (maxY-minY)+1;y++) {
+        	    			for (int z=0;z < (maxZ-minZ)+1;z++) {
+			                    if (0 <= x && x <= (maxX-minX) &&
+			                    	0 <= y && y <= (maxY-minY) &&
+			                    	0 <= z && z <= (maxZ-minZ)) {
+			                    	blocks[x][y][z] = (insertBlock < 0)?ran.nextInt(5):insertBlock;
+			                    	block++;
+			                    }
+        	    			}
+        	    		}
+        	    		plugin.log.info("GATHERING INFORMATIONS: " + block + "/" + totalBlocks + " ("+(block/totalBlocks*100) + "%)");
+                    }
+            		block = 0;
                     jobID = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
                         @Override
                         public void run() {
                         	if (!finish) {
 	                            int runs = 0;
-	                            while (runs < 100) {
+	                            while (runs < 1755) {
 	                                block++;
 	                                runs++;
-	
-	                                plugin.log.info("X:" + curX + " Y:" + curY + " Z:" + curZ + " Blocknr:" + block);
-	                                plugin.getServer().getWorlds().get(0).getBlockAt(curX, curY, curZ).setTypeId(insertBlock);
-	
+	                                
+            	    	    		plugin.getServer().getWorlds().get(0).getBlockAt(curX, curY, curZ).setTypeId(blocks[curX-minX+1][curY-minY+1][curZ-minZ+1]);
+
 	                                curZ++;
 	                                if (curZ > maxZ) {
 	                                    curZ = minZ;
@@ -84,9 +111,11 @@ public class Executor implements CommandExecutor {
 	                                }
 	                                if (curY < minY) {
 	                                    finishJob();
+	                                    runs = 1755;
 	                                    break;
 	                                }
 	                            }
+                                plugin.log.info("REBUILDING: " + block + "/" + totalBlocks + " ("+(block/totalBlocks*100) + "%)");
                         	}
                         }
                     }, 0, 1);
